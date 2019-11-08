@@ -1,4 +1,7 @@
-##nfinic-auth
+## nfinic-auth
 
 nfinic is an authentification system for websites
-This
+This is an open source project by nfinic.com a Democratic Republic of Congo security company.
+
+### Contact us
+info@nfinic.com
