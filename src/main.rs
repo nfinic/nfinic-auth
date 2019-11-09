@@ -11,6 +11,8 @@ mod encode;
 
 mod site;
 
+mod var;
+
 #[derive(Debug,Serialize,Deserialize)]
 
 struct Claims{
@@ -19,37 +21,34 @@ struct Claims{
     exp: usize
 }
 
+#[derive(Debug,Serialize,Deserialize)]
+struct NfinicClaims{
+    code: String, //code du site
+    hote: String, //nom du domaine
+    fields: String //champ a echanger
+}
+
 fn main() {
-
-    let mut my_claims = Claims{
-        sub:String::from("elielmathe@nfinic.com"),
-        company:String::from("nfinic"),
-        exp: 1_000_000_000
-    };
-
-    let key = "secret";
-
-    let token = encode(&Header::default(),&my_claims,key.as_ref());
 
     let arguments : Vec<String> = env::args().collect();
 
     println!("Operation: {}",&arguments[1]);
 
     if &arguments[1] == "encode" {
-        println!("We encode");
-        encode::get_string("Eliel est la");
 
-        if let Ok(v) = env::var("DEP_OPENSSL_VERSION_NUMBER") {
-           let version = u64::from_str_radix(&v, 16).unwrap();
+        let mut my_claims = NfinicClaims{
+            code:String::from("AFJDKSFFSDHJDSFHJFSDHJFSHJFSD"),
+            hote: String::from("https://do.nfinic.com"),
+            fields: String::from("[username,email,telephone]")
+        };
 
-           if version >= 0x1_01_01_00_0 {
-               println!("cargo:rustc-cfg=openssl111");
-           }else{
-               println!("No, cargo is a bit depracated");
-           }
-       }else{
-           println!("Not found");
-       }
+        let token = match encode(&Header::default(),&my_claims,(var::get_nf_key()).as_ref()){
+            Ok(t) => t,
+            Err(_) => panic!()
+        };
+
+        println!("\n\nThe token is : \n{}\n\n",token);
+
     }else{
         println!("Decode not yet implemented yet");
     }
